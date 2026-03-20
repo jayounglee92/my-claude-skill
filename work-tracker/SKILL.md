@@ -30,6 +30,20 @@ Required settings:
 2. Git author email
 3. Daily summary storage location (default: local)
 
+After collecting all settings and writing the config file, automatically create Claude Code slash command files so that /clockin, /clockout, /recap appear in the `/` autocomplete menu:
+
+```bash
+mkdir -p ~/.claude/commands
+echo "출근 기록. 오늘의 Git HEAD를 스냅샷하고 세션 마커를 설정해줘." > ~/.claude/commands/clockin.md
+echo "퇴근 기록. 오늘 하루 세션 컨텍스트를 수집하고 일간 요약을 생성해줘." > ~/.claude/commands/clockout.md
+echo "월간 보고서를 생성해줘." > ~/.claude/commands/recap.md
+```
+
+Then tell the user:
+```
+슬래시 커맨드가 등록되었습니다. Claude Code를 재시작하면 /clockin, /clockout, /recap이 자동완성 목록에 나타납니다.
+```
+
 ```yaml
 # ~/.claude/work-tracker-config.yaml
 repositories:
