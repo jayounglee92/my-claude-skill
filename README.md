@@ -141,7 +141,7 @@ keycloak-auth-generator/
 /clockin → 하루 작업 → /clockout → 일간 요약 자동 생성 → /recap → 월간 보고서
 ```
 
-### 주요 기능
+### 주요 기능 (work-tracker)
 
 - **자동 컨텍스트 수집** — Claude Code 세션 JSONL + Git diff + Auto Memory를 자동 파싱
 - **일간 요약 생성** — 퇴근 시 당일 전체 작업 내용을 자동 요약
