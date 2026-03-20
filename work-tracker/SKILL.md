@@ -40,7 +40,8 @@ echo "월간 보고서를 생성해줘." > ~/.claude/commands/recap.md
 ```
 
 Then tell the user:
-```
+
+```text
 슬래시 커맨드가 등록되었습니다. Claude Code를 재시작하면 /clockin, /clockout, /recap이 자동완성 목록에 나타납니다.
 ```
 
@@ -91,6 +92,7 @@ If the config already exists, load it. If repos have changed, notify the user an
 ## `/clockin` workflow
 
 ### Step 1: Load config
+
 Read `~/.claude/work-tracker-config.yaml`. If missing, run interactive setup.
 
 ### Step 1.5: Check for missed clockout
@@ -98,6 +100,7 @@ Read `~/.claude/work-tracker-config.yaml`. If missing, run interactive setup.
 Before recording today's clockin, check `~/.claude/work-logs/today.yaml`. If it exists and `clockout_time` is null, a previous clockout was missed.
 
 **Recovery flow:**
+
 1. Notify the user: "어제 퇴근(clockout)을 안 찍으셨네요."
 2. Ask: "어제 퇴근 시간이 언제였나요? (예: 18:30, 또는 Enter로 자동 추정)"
 3. If user enters a time → use that as clockout_time
@@ -137,7 +140,7 @@ Run archive logic per `file_management.archive_after_months`. See `references/fi
 
 ### Step 5: Confirm to user (in Korean)
 
-```
+```text
 ✅ 출근 기록됨 (09:15)
 📂 추적 중인 레포: my-service-a, my-service-b
 📝 오늘 계획: 로그인 페이지 작업 예정
@@ -160,19 +163,20 @@ If today.yaml is missing (clockout without clockin), assume clockin_time = today
 
 Collect from 4 sources in order. Graceful fallback if any source fails.
 
-**Source 1: Session JSONL (priority 1 — richest)**
+#### Source 1: Session JSONL (priority 1 — richest)
 
 Find `.jsonl` files under `~/.claude/projects/` created/modified after clockin.
 Compare with `clockin_sessions.txt` to filter only today's new sessions.
 
 Extract from each JSONL:
+
 - `type: "message"` → user requests (full), assistant responses (first 500 chars)
 - `type: "tool_use"` → tool name, target file, timestamp
 - Session start/end timestamps for timeline
 
 Fall back to Session Memory (summary.md) if JSONL parsing fails.
 
-**Source 2: Git diff (priority 2 — most reliable)**
+#### Source 2: Git diff (priority 2 — most reliable)
 
 ```bash
 git log --oneline <clockin_head>..HEAD --author="<git_author>"
@@ -180,15 +184,16 @@ git diff --stat <clockin_head>..HEAD
 ```
 
 If glab CLI available:
+
 ```bash
 glab mr list --author=@me --per-page=10
 ```
 
-**Source 3: Auto Memory changes (priority 3)**
+#### Source 3: Auto Memory changes (priority 3)
 
 Read `.md` files under `~/.claude/projects/*/memory/` modified after clockin.
 
-**Source 4: User manual notes (supplementary)**
+#### Source 4: User manual notes (supplementary)
 
 If user included notes with `/clockout`, include them.
 Otherwise ask: "코드 외 업무가 있었나요? (미팅, 코드리뷰 등) 없으면 Enter"
@@ -239,12 +244,14 @@ HH:MM ~ HH:MM (N시간 M분)
 ```
 
 **Timestamp extraction:**
+
 - **Session time**: From `timestamp` field in each JSONL entry.
 - **Commit time**: `git log --format="%H|%ad" --date=format:"%H:%M"`
 - **Service mapping**: Match edited file paths to repo directories.
 - **Overlap handling**: If two sessions overlap, assign by file edit volume.
 
 **Generation rules:**
+
 - Group commits into task-level summaries — never list individual commit messages
 - Never include code content (security). Only describe what was changed at file level
 - Summarize Claude discussions in 2-3 lines from session JSONL
@@ -253,7 +260,7 @@ HH:MM ~ HH:MM (N시간 M분)
 
 ### Step 4: Save
 
-```
+```text
 📤 오늘의 업무 요약을 어디에 저장할까요?
   1. 로컬 (기본) → ~/.claude/work-logs/YYYY/MM/YYYY-MM-DD.md
   2. Notion
@@ -289,7 +296,7 @@ Record clockout_time. File preserved until next clockin.
 `/recap` supports multiple argument formats for flexibility:
 
 | Input | Interpretation |
-|-------|---------------|
+| --- | --- |
 | `/recap` | Previous month (default). In March → February |
 | `/recap 2025-02` | Specific month: February 2025 |
 | `/recap 이번달` or `/recap this` | Current month (so far) |
@@ -298,6 +305,7 @@ Record clockout_time. File preserved until next clockin.
 | `/recap 2025-h1` or `/recap 상반기` | First half of current year (Jan–Jun) |
 
 **Parsing rules:**
+
 - Single YYYY-MM → that month only
 - Two YYYY-MM values → inclusive range
 - Korean natural language: "이번달" = current month, "저번달" = previous month, "3달" or "최근 3개월" = last 3 months
@@ -314,13 +322,15 @@ Read all `.md` files from `~/.claude/work-logs/YYYY/MM/`. Use `archive.md` if pr
 ### Step 3: Aggregate tasks by service
 
 Analyze daily summaries to:
+
 1. Group by service (repo)
-2. Merge multi-day work on same branch/MR into single task
-3. Tally duration, commit count, MR numbers per task
-4. Classify non-code work separately
+1. Merge multi-day work on same branch/MR into single task
+1. Tally duration, commit count, MR numbers per task
+1. Classify non-code work separately
 
 Output format (Korean):
-```
+
+```text
 ## YYYY년 MM월 업무 리스트
 
 ### [서비스명] 레포명 (N일 작업, M커밋)
@@ -339,7 +349,8 @@ Output format (Korean):
 ### Step 4: User selects tasks
 
 Show numbered task list. User picks which to include:
-```
+
+```text
 📋 보고할 태스크를 선택하세요 (쉼표로 구분, 'all' 전체 선택):
 > 선택:
 ```
@@ -347,9 +358,10 @@ Show numbered task list. User picks which to include:
 ### Step 5: Generate final report (in Korean)
 
 **Template resolution:**
+
 1. `--template=path` flag → that file
-2. Config `monthly_report.template` as file path → that file
-3. Neither → default 4-column table (see `references/report_format.md`)
+1. Config `monthly_report.template` as file path → that file
+1. Neither → default 4-column table (see `references/report_format.md`)
 
 **Default format:**
 ```markdown
@@ -361,6 +373,7 @@ Show numbered task list. User picks which to include:
 ```
 
 **Column data sources:**
+
 - **목표**: Infer from task group purpose. Use branch names, MR titles.
 - **핵심결과**: Aggregate daily "오늘 한 일" sections. List specific implementations.
 - **잘한 점**: Productivity gains, good decisions, proactive improvements. Include decision processes from sessions.
@@ -370,7 +383,7 @@ One row per service.
 
 ### Step 6: Export
 
-```
+```text
 📤 어디로 보낼까요?
   1. Notion → "YYYY년 MM월 나의 업무 리스트" + "YYYY년 MM월 나의 피드백"
   2. Obsidian → {vault}/monthly-reports/
@@ -380,6 +393,7 @@ One row per service.
 ```
 
 Always produce 2 documents:
+
 - **업무 리스트**: Full task list (all tasks)
 - **피드백**: Final report (selected tasks only)
 
@@ -430,10 +444,11 @@ Never read, store, or include in any summary:
 ### External export security
 
 Before sending to Notion, Confluence, Obsidian, etc.:
+
 1. Final scan for secret patterns
-2. Convert absolute paths to repo-relative (`~/projects/repo/src/file.tsx` → `src/file.tsx`)
-3. Mask internal IPs/domains with `[내부주소]`
-4. Ask user to confirm: "외부로 전송합니다. 민감 정보가 없는지 확인해주세요."
+1. Convert absolute paths to repo-relative (`~/projects/repo/src/file.tsx` → `src/file.tsx`)
+1. Mask internal IPs/domains with `[내부주소]`
+1. Ask user to confirm: "외부로 전송합니다. 민감 정보가 없는지 확인해주세요."
 
 ### Local storage security
 
@@ -443,7 +458,7 @@ Before sending to Notion, Confluence, Obsidian, etc.:
 
 ### Sensitive data regex patterns
 
-```
+```text
 # Secrets (case-insensitive)
 (password|passwd|secret|token|api[_-]?key|private[_-]?key|credential|auth[_-]?token|access[_-]?key|bearer|client[_-]?secret)[\s]*[=:"']
 
@@ -465,7 +480,7 @@ Before sending to Notion, Confluence, Obsidian, etc.:
 ## Reference files
 
 | File | When to read |
-|------|-------------|
+| --- | --- |
 | `references/report_format.md` | When generating default-format report in `/recap` |
 | `references/file_management.md` | When running auto file cleanup in `/clockin` |
 | `templates/default.md` | When a report template is needed |
