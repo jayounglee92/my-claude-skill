@@ -176,7 +176,14 @@ work-tracker/
 
 ### Claude Code (npx)
 
-프로젝트 루트에서 아래 명령어로 원하는 스킬을 바로 설치할 수 있습니다.
+**전역 설치** — 모든 프로젝트에서 사용 (work-tracker처럼 프로젝트에 종속되지 않는 스킬에 권장)
+
+```bash
+mkdir -p ~/.claude/skills
+npx degit jayounglee92/my-claude-skill/work-tracker ~/.claude/skills/work-tracker
+```
+
+**프로젝트별 설치** — 현재 프로젝트에서만 사용
 
 ```bash
 # keycloak-auth-generator 설치
