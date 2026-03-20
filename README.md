@@ -180,7 +180,7 @@ work-tracker/
 
 ```bash
 mkdir -p ~/.claude/skills
-npx degit jayounglee92/my-claude-skill/work-tracker ~/.claude/skills/work-tracker
+npx degit jayounglee92/my-claude-skill/work-tracker ~/.claude/skills/work-tracker --force
 ```
 
 **프로젝트별 설치** — 현재 프로젝트에서만 사용
