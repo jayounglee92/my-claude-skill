@@ -143,43 +143,106 @@ file_management:
 - 외부(Notion/Confluence 등)로 전송하기 전에 사용자가 직접 한 번 더 확인하는 것을 권장한다.
 - 회사의 보안 정책에 따라 외부 전송 자체를 비활성화할 수 있다 (`daily_storage.notion.enabled: false` 등).
 
-## 설정
+## 설치 및 초기 설정
 
-최초 실행 시 `~/.claude/work-tracker-config.yaml`을 인터랙티브하게 생성한다.
+### 1. 스킬 설치
 
-```yaml
-# 관리하는 레포 목록
-repositories:
-  - path: ~/projects/my-service-a    # 예시
-    service_name: 서비스A              # 예시 — 실제 서비스명으로 변경
-  - path: ~/projects/my-service-b    # 예시
-    service_name: 서비스B              # 예시 — 실제 서비스명으로 변경
-
-# Git author
-git_author: "user@company.com"
-
-# 일간 요약 저장 위치
-daily_storage:
-  local: true
-  local_path: ~/.claude/work-logs/
-  notion:
-    enabled: false
-    database_id: ""
-  obsidian:
-    enabled: false
-    vault_path: ""
-    folder: work-logs
-  confluence:
-    enabled: false
-    base_url: ""
-    space_key: ""
-    parent_page_id: ""
-
-# 월간 보고서
-monthly_report:
-  template: default              # default 또는 커스텀 템플릿 파일 경로
-  export_default: local          # local / notion / obsidian / confluence
+```bash
+curl -fsSL https://raw.githubusercontent.com/ioslife/my-claude-skill/main/install.sh | bash
 ```
+
+### 2. 초기 설정 (최초 1회)
+
+설치 후 Claude Code에서 `/clockin`을 처음 실행하면 아래 3단계 셋업이 자동으로 시작된다.
+**설정 파일(`~/.claude/work-tracker-config.yaml`)이 이미 있으면 셋업은 건너뛴다.**
+
+---
+
+#### [1/3] 레포지토리 선택
+
+```
+레포지토리가 모여 있는 상위 폴더 경로를 입력해주세요.
+(예: ~/projects, ~/repos, ~/workspace)
+>
+```
+
+경로를 입력하면 해당 폴더 안의 Git 레포를 자동으로 스캔해서 목록으로 보여준다.
+
+```
+다음 레포지토리를 발견했습니다. 추적할 레포를 선택해주세요.
+(번호를 쉼표로 구분, 예: 1,3 / 'all'로 전체 선택)
+
+  1. my-service-a
+  2. my-service-b
+  3. infra-scripts
+
+> 선택:
+```
+
+선택한 레포마다 보고서에 표시될 서비스 이름을 입력한다. Enter를 누르면 폴더명 그대로 사용한다.
+
+---
+
+#### [2/3] 로컬 저장 위치
+
+일간 요약 `.md` 파일을 어디에 저장할지 선택한다.
+
+```
+일간 요약을 저장할 위치를 선택해주세요.
+
+  1. ~/.claude/work-logs/  (기본값, 권장)
+  2. 직접 입력
+
+> 선택 (Enter = 1번):
+```
+
+---
+
+#### [3/3] 외부 자동 전송 (선택)
+
+`/clockout` 시 일간 요약을 자동으로 보낼 외부 서비스를 선택한다.
+로컬 저장은 항상 기본으로 포함되며, 외부 전송은 선택 사항이다.
+
+```
+퇴근(clockout) 시 일간 요약을 자동으로 전송할 곳을 선택해주세요.
+(번호를 쉼표로 구분해 여러 곳 선택 가능 / Enter = 없음)
+
+  1. Notion        — 지정한 데이터베이스에 페이지로 자동 생성
+  2. Obsidian      — 지정한 볼트 폴더에 마크다운 파일로 저장
+  3. Confluence    — 지정한 스페이스에 페이지로 자동 생성
+  4. 기타          — 저장할 폴더 경로를 직접 지정
+  5. 없음          — 로컬만 저장
+
+> 선택:
+```
+
+선택한 서비스에 따라 Database ID, Vault 경로 등 필요한 값을 추가로 입력한다.
+
+---
+
+#### 셋업 완료
+
+모든 단계가 끝나면 설정 파일이 저장되고 슬래시 커맨드가 자동 등록된다.
+
+```
+✅ 설정이 완료되었습니다!
+
+📂 추적 레포: my-service-a (서비스A), my-service-b (서비스B)
+💾 로컬 저장: ~/.claude/work-logs/
+📤 자동 전송: Notion (database: xxxx)
+   → /clockout 할 때마다 위 경로에 자동으로 업로드됩니다.
+
+슬래시 커맨드가 등록되었습니다. Claude Code를 재시작하면
+/clockin, /clockout, /recap이 자동완성 목록에 나타납니다.
+```
+
+> **설정 변경**: 나중에 설정을 바꾸고 싶으면 그냥 말로 하면 된다.
+> ```
+> 노션 말고 이제 옵시디언으로 쓸거야
+> 레포 하나 더 추가해줘
+> 저장 위치 ~/Dropbox/work-logs 로 바꿔줘
+> ```
+> 변경 전후를 보여주고 확인을 받은 뒤 `~/.claude/work-tracker-config.yaml`을 자동으로 업데이트한다.
 
 ## 내보내기 대상
 
