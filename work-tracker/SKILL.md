@@ -334,7 +334,6 @@ Render a visually distinct banner using box-drawing characters. Fill in actual v
 
   ⏰  출근   09:15
   📂  레포   my-service-a  ·  my-service-b
-  📝  계획   로그인 페이지 작업 예정
 
 ──────────────────────────────────────────────
   오늘도 화이팅! 🙌
@@ -342,8 +341,6 @@ Render a visually distinct banner using box-drawing characters. Fill in actual v
   퇴근할 때 /clockout 🚪
 ──────────────────────────────────────────────
 ```
-
-If no planned tasks, omit the "계획" line.
 
 ---
 
