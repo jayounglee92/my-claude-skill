@@ -122,7 +122,7 @@ Run `git config --global user.email` silently and store the result as `git_autho
 Ask the user:
 
 ```
-[2/3] 일간 요약을 저장할 위치를 선택해주세요.
+[2/4] 일간 요약을 저장할 위치를 선택해주세요.
 
   1. ~/.claude/work-logs/  (기본값, 권장)
   2. 직접 입력
