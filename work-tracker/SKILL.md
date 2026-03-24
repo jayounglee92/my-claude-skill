@@ -203,8 +203,26 @@ After collecting all integration settings, explain the auto-send behavior:
 
 ```
 설정한 연동처에는 /clockout 시 일간 요약이 자동으로 전송됩니다.
-나중에 설정을 바꾸고 싶으면 ~/.claude/work-tracker-config.yaml 을 직접 수정하세요.
+나중에 설정을 바꾸고 싶으면 그냥 말로 하면 됩니다.
 ```
+
+#### Step 3.5: Default work hours
+
+Ask the user:
+
+```
+출퇴근을 깜빡했을 때 사용할 기본 시간을 설정해주세요.
+(Enter = 기본값 사용)
+
+  기본 출근 시간 (Enter = 08:30):
+  >
+
+  기본 퇴근 시간 (Enter = 17:30):
+  >
+```
+
+- If the user presses Enter for either field, use `08:30` / `17:30` respectively.
+- These values are used when clockin or clockout time cannot be inferred from session/git data.
 
 #### Step 4: Write config and finish setup
 
@@ -237,6 +255,10 @@ daily_storage:
     base_url: ""
     space_key: ""
     parent_page_id: ""
+
+default_hours:
+  clockin: "08:30"   # used when clockin time cannot be inferred
+  clockout: "17:30"  # used when clockout time cannot be inferred
 
 monthly_report:
   template: default
@@ -296,7 +318,7 @@ Before recording today's clockin, check `~/.claude/work-logs/today.yaml`. If it 
 1. Notify the user: "어제 퇴근(clockout)을 안 찍으셨네요."
 2. Ask: "어제 퇴근 시간이 언제였나요? (예: 18:30, 또는 Enter로 자동 추정)"
 3. If user enters a time → use that as clockout_time
-4. If user presses Enter → estimate clockout_time from the last session JSONL timestamp or last Git commit time of that day
+4. If user presses Enter → estimate clockout_time from the last session JSONL timestamp or last Git commit time of that day. If neither is available, fall back to `default_hours.clockout` from config (default: 17:30)
 5. Run the full `/clockout` workflow for the missed day (collect context, generate summary, save)
 6. Then proceed with today's clockin as normal
 
@@ -356,7 +378,7 @@ Render a visually distinct banner using box-drawing characters. Fill in actual v
 ### Step 1: Load config + today.yaml
 
 Read clockin_time and git_snapshots from `~/.claude/work-logs/today.yaml`.
-If today.yaml is missing (clockout without clockin), assume clockin_time = today 00:00.
+If today.yaml is missing (clockout without clockin), use `default_hours.clockin` from config as clockin_time (default: 08:30).
 
 ### Step 2: Auto-collect context
 
