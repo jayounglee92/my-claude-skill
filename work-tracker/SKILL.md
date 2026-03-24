@@ -316,7 +316,7 @@ Before recording today's clockin, check `~/.claude/work-logs/today.yaml`. If it 
 **Recovery flow:**
 
 1. Notify the user: "어제 퇴근(clockout)을 안 찍으셨네요."
-2. Ask: "어제 퇴근 시간이 언제였나요? (예: 18:30, 또는 Enter로 자동 추정)"
+2. Ask: "어제 퇴근 시간이 언제였나요? (예: 17:30, 또는 Enter로 자동 추정)"
 3. If user enters a time → use that as clockout_time
 4. If user presses Enter → estimate clockout_time from the last session JSONL timestamp or last Git commit time of that day. If neither is available, fall back to `default_hours.clockout` from config (default: 17:30)
 5. Run the full `/clockout` workflow for the missed day (collect context, generate summary, save)
@@ -329,7 +329,7 @@ This ensures no workday is lost even if the user forgets to clockout.
 Save to `~/.claude/work-logs/today.yaml`:
 
 ```yaml
-clockin_time: "2025-03-20T09:15:00+09:00"
+clockin_time: "2025-03-20T08:30:00+09:00"
 clockout_time: null
 planned_tasks: ""
 git_snapshots:
@@ -361,7 +361,7 @@ Render a visually distinct banner using box-drawing characters. Fill in actual v
 │  🌅  WORK TRACKER  ·  출근                     │
 ╰──────────────────────────────────────────────╯
 
-  ⏰  출근   09:15
+  ⏰  출근   08:30
   📂  레포   my-service-a  ·  my-service-b
 
 ──────────────────────────────────────────────
@@ -389,7 +389,7 @@ Before collecting, show an opening banner:
 │  🌙  WORK TRACKER  ·  퇴근                   │
 ╰──────────────────────────────────────────────╯
 
-  🕐  09:15 → 18:30   (9시간 15분)
+  🕐  08:30 → 17:30   (9시간)
 
   🔍  컨텍스트 수집 중...
 ```

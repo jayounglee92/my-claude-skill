@@ -23,14 +23,14 @@
 ## 어떻게 동작하는가
 
 ```
-/clockin (09:15)
+/clockin (08:30)
   → Git HEAD 스냅샷 저장
   → 세션 마커 설정
 
   ... 하루 동안 터미널 여러 개 열고 닫으며 작업 ...
   (세션마다 JSONL이 자동으로 디스크에 쌓임)
 
-/clockout (18:30)
+/clockout (17:30)
   → Session JSONL 자동 수집 (오늘 모든 세션)
   → Git diff 수집 (clockin HEAD vs 현재 HEAD)
   → Auto Memory 변경분 수집
@@ -199,7 +199,23 @@ curl -fsSL https://raw.githubusercontent.com/ioslife/my-claude-skill/main/instal
 
 ---
 
-#### [3/3] 외부 자동 전송 (권장)
+#### [3/3] 기본 출퇴근 시간
+
+출퇴근을 깜빡했을 때 사용할 기본 시간을 설정한다. Enter를 누르면 기본값이 적용된다.
+
+```
+기본 출근 시간 (Enter = 08:30):
+>
+
+기본 퇴근 시간 (Enter = 17:30):
+>
+```
+
+세션 데이터나 Git 커밋으로 시간을 추정할 수 없을 때 이 값이 사용된다.
+
+---
+
+#### [4/4] 외부 자동 전송 (선택)
 
 `/clockout` 시 일간 요약을 자동으로 보낼 외부 서비스를 선택한다.
 로컬 저장은 항상 기본으로 포함되며, 외부 전송은 선택 사항이다.
@@ -230,6 +246,7 @@ curl -fsSL https://raw.githubusercontent.com/ioslife/my-claude-skill/main/instal
 
 📂 추적 레포: my-service-a (서비스A), my-service-b (서비스B)
 💾 로컬 저장: ~/.claude/work-logs/
+⏰ 기본 시간: 출근 08:30 / 퇴근 17:30
 📤 자동 전송: Notion (database: xxxx)
    → /clockout 할 때마다 위 경로에 자동으로 업로드됩니다.
 
