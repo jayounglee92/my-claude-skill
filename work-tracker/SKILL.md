@@ -487,6 +487,36 @@ HH:MM ~ HH:MM (N시간 M분)
 
 If `daily_storage` is fully configured, save automatically without prompting. Always save locally. Show the result as a compact save report:
 
+#### Notion export: markdown → Notion blocks
+
+Notion API does **not** auto-parse markdown. When sending to Notion, convert the summary into proper Notion block objects before calling the API:
+
+| Markdown element | Notion block type |
+|-----------------|-------------------|
+| `# Heading 1` | `heading_1` |
+| `## Heading 2` | `heading_2` |
+| `### Heading 3` | `heading_3` |
+| `\| table \|` | `table` + `table_row` blocks |
+| `- list item` | `bulleted_list_item` |
+| plain text paragraph | `paragraph` |
+
+**Table conversion rule:** Parse each markdown table into a `table` block with `has_column_header: true`. Each row becomes a `table_row` block with `cells` as an array of rich text arrays. Never send raw `|---|` markdown as a text block — Notion will render it as plain text.
+
+**Example Notion table block structure:**
+```json
+{
+  "type": "table",
+  "table": {
+    "table_width": 3,
+    "has_column_header": true,
+    "children": [
+      { "type": "table_row", "table_row": { "cells": [[{"text":{"content":"시간"}}],[{"text":{"content":"서비스"}}],[{"text":{"content":"작업 내용"}}]] }},
+      { "type": "table_row", "table_row": { "cells": [[{"text":{"content":"09:33 ~ 10:17"}}],[{"text":{"content":"dw-ai-platform"}}],[{"text":{"content":"커리큘럼 탭 TDD 설계"}}]] }}
+    ]
+  }
+}
+```
+
 ```text
 ──────────────────────────────────────────────
   📋  일간 요약 저장 완료
