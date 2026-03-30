@@ -332,6 +332,7 @@ Save to `~/.claude/work-logs/today.yaml`:
 clockin_time: "2025-03-20T08:30:00+09:00"
 clockout_time: null
 planned_tasks: ""
+must_do_today: ""
 git_snapshots:
   my-service-a: "abc1234def"
   my-service-b: "567890abc"
@@ -370,6 +371,18 @@ Render a visually distinct banner using box-drawing characters. Fill in actual v
   퇴근할 때 /clockout 🚪
 ──────────────────────────────────────────────
 ```
+
+### Step 6: Ask for must-do task
+
+After showing the banner, ask the user:
+
+```text
+✅ 오늘 꼭 해야 할 일이 있으신가요? (없으면 Enter)
+>
+```
+
+- If the user enters something → save it to `must_do_today` field in `~/.claude/work-logs/today.yaml`
+- If the user presses Enter → leave `must_do_today` as empty string, skip silently
 
 ---
 
@@ -508,6 +521,26 @@ Notion API does **not** auto-parse markdown. When sending to Notion, convert the
   }
 }
 ```
+
+Before showing the save report, check `must_do_today` in `~/.claude/work-logs/today.yaml`.
+
+**If `must_do_today` is not empty**, show a reminder block first:
+
+```text
+──────────────────────────────────────────────
+  💡  오늘 꼭 하기로 한 일
+     "[must_do_today 값]"
+
+  완료하셨나요? (y / n)
+  >
+```
+
+- If `y` → append "[완료] [must_do_today 값]" to the daily summary's completed tasks section
+- If `n` → append "[미완료] [must_do_today 값]" to the `todos` section so it carries over to tomorrow's plan
+
+**If `must_do_today` is empty**, skip this block entirely.
+
+Then show the save report:
 
 ```text
 ──────────────────────────────────────────────
