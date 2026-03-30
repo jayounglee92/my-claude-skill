@@ -494,6 +494,9 @@ If `daily_storage` is fully configured, save automatically without prompting. Al
 
 #### Notion export: markdown → Notion blocks
 
+**Page title format:** Use `YYYY-MM-DD 업무 요약(요일)` — e.g., `2026-03-27 업무 요약(금)`.
+Derive the Korean day abbreviation from the date: 월/화/수/목/금/토/일.
+
 Notion API does **not** auto-parse markdown. When sending to Notion, convert the summary into proper Notion block objects before calling the API:
 
 | Markdown element | Notion block type |
@@ -547,7 +550,7 @@ Then show the save report:
   📋  일간 요약 저장 완료
 
   ✓  💾  로컬      ~/.claude/work-logs/2025/03/2025-03-20.md
-  ✓  🔴  Notion    "2025-03-20 업무 요약" 페이지 생성됨
+  ✓  🔴  Notion    "2025-03-20 업무 요약(목)" 페이지 생성됨
   ✗  🟣  Obsidian  설정 없음, 건너뜀
 
 ──────────────────────────────────────────────
