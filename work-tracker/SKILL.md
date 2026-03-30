@@ -466,7 +466,7 @@ Read `templates/daily_summary.md` for the output format. Synthesize all collecte
 | `{{CLOCKIN}}` | HH:MM |
 | `{{CLOCKOUT}}` | HH:MM |
 | `{{DURATION}}` | N시간 M분 |
-| `{{timeline}}` | Array of `{time, service, description}` |
+| `{{timeline}}` | Array of `{start_time, end_time, service, description}` |
 | `{{services}}` | Array of per-repo work blocks |
 | `{{non_code}}` | Array of `{time, description}` for non-code work |
 | `{{todos}}` | Array of unresolved items / next-day tasks |

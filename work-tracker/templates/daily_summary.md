@@ -9,7 +9,7 @@
 | 시간 | 서비스 | 작업 내용 |
 |------|--------|---------|
 {{#each timeline}}
-| {{time}} | {{service}} | {{description}} |
+| {{start_time}} ~ {{end_time}} | {{service}} | {{description}} |
 {{/each}}
 
 ## 오늘 한 일
